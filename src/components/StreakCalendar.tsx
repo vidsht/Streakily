@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Streak } from '@/types/streak';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface StreakCalendarProps {
   streak: Streak;
@@ -13,6 +13,13 @@ interface StreakCalendarProps {
 
 export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCalendarProps) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  
+  // Force re-render when streak completions change
+  const [, forceUpdate] = useState({});
+  
+  useEffect(() => {
+    forceUpdate({});
+  }, [streak.completions]);
   
   const today = new Date();
   const year = currentDate.getFullYear();
@@ -51,6 +58,7 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
 
   const handleDateClick = (date: Date) => {
     const dateStr = date.toISOString().split('T')[0];
+    console.log('Clicking date:', dateStr, 'Current completions:', streak.completions);
     onToggleCompletion(streak.id, dateStr);
   };
 
@@ -104,17 +112,19 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
             
             return (
               <button
-                key={index}
+                key={`${date.getTime()}-${completed}`} // Force re-render with completion state
                 onClick={() => handleDateClick(date)}
                 className={`
-                  aspect-square rounded-lg text-sm font-medium transition-colors
+                  aspect-square rounded-lg text-sm font-medium transition-all duration-200
                   ${currentMonth ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400'}
                   ${todayDate ? 'ring-2 ring-blue-500' : ''}
                   ${completed 
-                    ? 'bg-green-500 text-white hover:bg-green-600' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-green-500 text-white hover:bg-green-600 scale-105' 
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105'
                   }
+                  ${currentMonth ? 'cursor-pointer' : 'cursor-default'}
                 `}
+                disabled={!currentMonth}
               >
                 {date.getDate()}
               </button>
@@ -123,10 +133,10 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 mt-4 text-sm text-gray-600 dark:text-gray-400">
+        <div className="flex items-center gap-4 mt-6 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span>Completed</span>
+            <span>Completed ({streak.completions.length} total)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-2 border-blue-500 rounded"></div>
