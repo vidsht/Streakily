@@ -9,50 +9,36 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Streak } from '@/types/streak';
 
 interface StreakFormProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (streak: Omit<Streak, 'id' | 'createdAt' | 'completions'>) => void;
-  initialData?: Streak;
+  streak?: Streak | null;
+  onSubmit: (data: Omit<Streak, 'id' | 'createdAt' | 'completions'>) => void;
+  onCancel: () => void;
 }
 
-export const StreakForm = ({ open, onClose, onSubmit, initialData }: StreakFormProps) => {
+export const StreakForm = ({ streak, onSubmit, onCancel }: StreakFormProps) => {
   const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    description: initialData?.description || '',
-    category: initialData?.category || 'Health',
-    frequency: initialData?.frequency || 'daily',
-    goalDuration: initialData?.goalDuration || 21,
-    color: initialData?.color || '#3b82f6',
-    timerDuration: initialData?.timerDuration || undefined,
-    reminderTime: initialData?.reminderTime || ''
+    name: streak?.name || '',
+    description: streak?.description || '',
+    category: streak?.category || 'Health',
+    frequency: streak?.frequency || 'daily',
+    goalDuration: streak?.goalDuration || 21,
+    color: streak?.color || '#3b82f6',
+    timerDuration: streak?.timerDuration || undefined,
+    reminderTime: streak?.reminderTime || ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData as any);
-    onClose();
-    if (!initialData) {
-      setFormData({
-        name: '',
-        description: '',
-        category: 'Health',
-        frequency: 'daily',
-        goalDuration: 21,
-        color: '#3b82f6',
-        timerDuration: undefined,
-        reminderTime: ''
-      });
-    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
-            {initialData ? 'Edit Streak' : 'Create New Streak'}
-          </DialogTitle>
-        </DialogHeader>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold">
+            {streak ? 'Edit Streak' : 'Create New Streak'}
+          </h2>
+        </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -153,15 +139,15 @@ export const StreakForm = ({ open, onClose, onSubmit, initialData }: StreakFormP
           </div>
           
           <div className="flex gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+            <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
               Cancel
             </Button>
             <Button type="submit" className="flex-1">
-              {initialData ? 'Update' : 'Create'} Streak
+              {streak ? 'Update' : 'Create'} Streak
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };

@@ -5,14 +5,13 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, Circle, Timer, Trash2, Edit } from 'lucide-react';
 import { Streak } from '@/types/streak';
 import { calculateStreakStats, isCompletedToday, getCategoryColor } from '@/lib/streakUtils';
-import { useState } from 'react';
 
 interface StreakCardProps {
   streak: Streak;
   onToggleCompletion: (id: string) => void;
   onEdit: (streak: Streak) => void;
   onDelete: (id: string) => void;
-  onStartTimer: (streak: Streak) => void;
+  onClick?: () => void;
 }
 
 export const StreakCard = ({ 
@@ -20,14 +19,17 @@ export const StreakCard = ({
   onToggleCompletion, 
   onEdit, 
   onDelete,
-  onStartTimer 
+  onClick 
 }: StreakCardProps) => {
   const stats = calculateStreakStats(streak);
   const completed = isCompletedToday(streak);
   const categoryColor = getCategoryColor(streak.category);
 
   return (
-    <Card className="relative group hover:shadow-lg transition-shadow">
+    <Card 
+      className="relative group hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={onClick}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="space-y-2">
@@ -47,14 +49,20 @@ export const StreakCard = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => onEdit(streak)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(streak);
+              }}
             >
               <Edit className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => onDelete(streak.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(streak.id);
+              }}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -84,7 +92,10 @@ export const StreakCard = ({
         
         <div className="flex gap-2">
           <Button
-            onClick={() => onToggleCompletion(streak.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleCompletion(streak.id);
+            }}
             variant={completed ? "default" : "outline"}
             className="flex-1"
           >
@@ -100,7 +111,10 @@ export const StreakCard = ({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => onStartTimer(streak)}
+              onClick={(e) => {
+                e.stopPropagation();
+                // Timer functionality can be added later
+              }}
             >
               <Timer className="h-4 w-4" />
             </Button>

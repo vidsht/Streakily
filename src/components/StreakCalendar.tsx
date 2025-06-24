@@ -1,14 +1,17 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { Streak } from '@/types/streak';
 import { getCategoryColor } from '@/lib/streakUtils';
 
 interface StreakCalendarProps {
   streak: Streak;
-  onDateClick: (date: string) => void;
+  onToggleCompletion: (id: string, date?: string) => void;
+  onBack: () => void;
 }
 
-export const StreakCalendar = ({ streak, onDateClick }: StreakCalendarProps) => {
+export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCalendarProps) => {
   const today = new Date();
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -36,10 +39,20 @@ export const StreakCalendar = ({ streak, onDateClick }: StreakCalendarProps) => 
     return date.toDateString() === today.toDateString();
   };
 
+  const handleDateClick = (date: Date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    onToggleCompletion(streak.id, dateStr);
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{streak.name} Calendar</CardTitle>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" onClick={onBack}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <CardTitle className="text-lg">{streak.name} Calendar</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-7 gap-1 mb-2">
@@ -58,7 +71,7 @@ export const StreakCalendar = ({ streak, onDateClick }: StreakCalendarProps) => 
             return (
               <button
                 key={index}
-                onClick={() => onDateClick(date.toISOString().split('T')[0])}
+                onClick={() => handleDateClick(date)}
                 className={`
                   aspect-square rounded-lg text-sm font-medium transition-colors
                   ${currentMonth ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400'}
