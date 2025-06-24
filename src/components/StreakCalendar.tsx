@@ -56,7 +56,18 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
     return date.toDateString() === today.toDateString();
   };
 
+  const isPastDate = (date: Date) => {
+    const dateWithoutTime = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const todayWithoutTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return dateWithoutTime < todayWithoutTime;
+  };
+
   const handleDateClick = (date: Date) => {
+    // Don't allow clicking on past dates or dates not in current month
+    if (isPastDate(date) || !isCurrentMonth(date)) {
+      return;
+    }
+    
     const dateStr = date.toISOString().split('T')[0];
     console.log('Clicking date:', dateStr, 'Current completions:', streak.completions);
     onToggleCompletion(streak.id, dateStr);
@@ -109,10 +120,12 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
             const completed = isCompleted(date);
             const currentMonth = isCurrentMonth(date);
             const todayDate = isToday(date);
+            const pastDate = isPastDate(date);
+            const isClickable = currentMonth && !pastDate;
             
             return (
               <button
-                key={`${date.getTime()}-${completed}`} // Force re-render with completion state
+                key={`${date.getTime()}-${completed}`}
                 onClick={() => handleDateClick(date)}
                 className={`
                   aspect-square rounded-lg text-sm font-medium transition-all duration-200
@@ -120,11 +133,14 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
                   ${todayDate ? 'ring-2 ring-blue-500' : ''}
                   ${completed 
                     ? 'bg-green-500 text-white hover:bg-green-600 scale-105' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105'
+                    : isClickable 
+                      ? 'hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105'
+                      : ''
                   }
-                  ${currentMonth ? 'cursor-pointer' : 'cursor-default'}
+                  ${pastDate && currentMonth ? 'opacity-50 cursor-not-allowed' : ''}
+                  ${isClickable ? 'cursor-pointer' : 'cursor-default'}
                 `}
-                disabled={!currentMonth}
+                disabled={!isClickable}
               >
                 {date.getDate()}
               </button>
@@ -141,6 +157,10 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-2 border-blue-500 rounded"></div>
             <span>Today</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-gray-300 rounded opacity-50"></div>
+            <span>Past dates (cannot modify)</span>
           </div>
         </div>
       </CardContent>
