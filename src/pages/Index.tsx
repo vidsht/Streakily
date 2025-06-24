@@ -16,6 +16,7 @@ const Index = () => {
   const { streaks, loading, addStreak, toggleCompletion, deleteStreak, updateStreak } = useStreaks();
   const [showForm, setShowForm] = useState(false);
   const [selectedStreak, setSelectedStreak] = useState(null);
+  const [activeTab, setActiveTab] = useState('streaks');
 
   if (loading) {
     return (
@@ -42,6 +43,15 @@ const Index = () => {
 
   const handleStreakClick = (streak: any) => {
     setSelectedStreak(streak);
+    setActiveTab('calendar'); // Auto-switch to calendar when clicking a streak
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    // If switching to calendar and no streak selected, select the first one
+    if (value === 'calendar' && !selectedStreak && streaks.length > 0) {
+      setSelectedStreak(streaks[0]);
+    }
   };
 
   const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -109,7 +119,7 @@ const Index = () => {
           </Card>
         </div>
 
-        <Tabs defaultValue="streaks" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="streaks">My Streaks</TabsTrigger>
             <TabsTrigger value="calendar">Calendar View</TabsTrigger>
@@ -150,12 +160,46 @@ const Index = () => {
           </TabsContent>
           
           <TabsContent value="calendar">
-            {selectedStreak ? (
-              <StreakCalendar
-                streak={selectedStreak}
-                onToggleCompletion={toggleCompletion}
-                onBack={() => setSelectedStreak(null)}
-              />
+            {streaks.length === 0 ? (
+              <div className="text-center py-12">
+                <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  No streaks to display
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">
+                  Create your first streak to see the calendar view
+                </p>
+                <Button onClick={() => setShowForm(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Your First Streak
+                </Button>
+              </div>
+            ) : selectedStreak ? (
+              <div className="space-y-4">
+                {/* Streak selector dropdown */}
+                <div className="flex items-center gap-4 mb-6">
+                  <label className="text-sm font-medium">Select Streak:</label>
+                  <select 
+                    value={selectedStreak.id} 
+                    onChange={(e) => {
+                      const streak = streaks.find(s => s.id === e.target.value);
+                      setSelectedStreak(streak);
+                    }}
+                    className="px-3 py-2 border border-gray-300 rounded-md bg-white dark:bg-gray-800 dark:border-gray-600"
+                  >
+                    {streaks.map((streak) => (
+                      <option key={streak.id} value={streak.id}>
+                        {streak.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <StreakCalendar
+                  streak={selectedStreak}
+                  onToggleCompletion={toggleCompletion}
+                  onBack={() => setActiveTab('streaks')}
+                />
+              </div>
             ) : (
               <div className="text-center py-12">
                 <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
