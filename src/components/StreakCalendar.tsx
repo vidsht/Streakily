@@ -38,9 +38,21 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
   const days = [];
   const currentDatePointer = new Date(startDate);
 
+  // Generate days but only include up to today
   for (let i = 0; i < 42; i++) {
-    days.push(new Date(currentDatePointer));
+    const currentDay = new Date(currentDatePointer);
+    
+    // Only add days that are today or in the past
+    if (currentDay <= today) {
+      days.push(currentDay);
+    }
+    
     currentDatePointer.setDate(currentDatePointer.getDate() + 1);
+    
+    // Stop if we've passed today
+    if (currentDatePointer > today) {
+      break;
+    }
   }
 
   const isCompleted = (date: Date) => {
@@ -63,8 +75,8 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
   };
 
   const handleDateClick = (date: Date) => {
-    // Don't allow clicking on past dates or dates not in current month
-    if (isPastDate(date) || !isCurrentMonth(date)) {
+    // Only allow clicking on current month dates (past dates and today are allowed)
+    if (!isCurrentMonth(date)) {
       return;
     }
     
@@ -78,7 +90,17 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
   };
 
   const goToNextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
+    // Don't allow going to future months beyond current month
+    const nextMonth = new Date(year, month + 1, 1);
+    if (nextMonth.getMonth() <= today.getMonth() && nextMonth.getFullYear() <= today.getFullYear()) {
+      setCurrentDate(nextMonth);
+    }
+  };
+
+  // Check if next month button should be disabled
+  const isNextMonthDisabled = () => {
+    const nextMonth = new Date(year, month + 1, 1);
+    return nextMonth.getMonth() > today.getMonth() || nextMonth.getFullYear() > today.getFullYear();
   };
 
   return (
@@ -100,7 +122,13 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
           <h3 className="text-lg font-semibold">
             {monthNames[month]} {year}
           </h3>
-          <Button variant="outline" size="sm" onClick={goToNextMonth}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={goToNextMonth}
+            disabled={isNextMonthDisabled()}
+            className={isNextMonthDisabled() ? 'opacity-50 cursor-not-allowed' : ''}
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -121,7 +149,7 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
             const currentMonth = isCurrentMonth(date);
             const todayDate = isToday(date);
             const pastDate = isPastDate(date);
-            const isClickable = currentMonth && !pastDate;
+            const isClickable = currentMonth;
             
             return (
               <button
@@ -137,7 +165,7 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
                       ? 'hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105'
                       : ''
                   }
-                  ${pastDate && currentMonth ? 'opacity-50 cursor-not-allowed' : ''}
+                  ${pastDate && currentMonth ? 'opacity-75' : ''}
                   ${isClickable ? 'cursor-pointer' : 'cursor-default'}
                 `}
                 disabled={!isClickable}
@@ -157,10 +185,6 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-2 border-blue-500 rounded"></div>
             <span>Today</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-gray-300 rounded opacity-50"></div>
-            <span>Past dates (cannot modify)</span>
           </div>
         </div>
       </CardContent>
