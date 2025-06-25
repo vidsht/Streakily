@@ -87,8 +87,13 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
   };
 
   const handleDateClick = (date: Date) => {
-    // Only allow clicking on current month dates (past dates and today are allowed)
+    // Only allow clicking on current month dates
     if (!isCurrentMonth(date)) {
+      return;
+    }
+    
+    // Only allow clicking on today's date for completion toggle
+    if (!isToday(date)) {
       return;
     }
     
@@ -197,7 +202,7 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
               const currentMonth = isCurrentMonth(date);
               const todayDate = isToday(date);
               const pastDate = isPastDate(date);
-              const isClickable = currentMonth;
+              const isClickable = currentMonth && todayDate; // Only today is clickable
               
               return (
                 <button
@@ -209,13 +214,13 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
                     ${currentMonth ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400'}
                     ${todayDate ? 'ring-1 ring-blue-500' : ''}
                     ${completed 
-                      ? 'bg-green-500 text-white hover:bg-green-600 shadow-sm' 
+                      ? 'bg-green-500 text-white shadow-sm' 
                       : isClickable 
                         ? 'hover:bg-gray-100 dark:hover:bg-gray-700'
                         : ''
                     }
                     ${pastDate && currentMonth ? 'opacity-75' : ''}
-                    ${isClickable ? 'cursor-pointer' : 'cursor-default'}
+                    ${isClickable ? 'cursor-pointer hover:bg-green-50' : 'cursor-default'}
                   `}
                   disabled={!isClickable}
                 >
@@ -233,7 +238,7 @@ export const StreakCalendar = ({ streak, onToggleCompletion, onBack }: StreakCal
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 border border-blue-500 rounded"></div>
-              <span>Today</span>
+              <span>Today (clickable)</span>
             </div>
           </div>
         </CardContent>
