@@ -5,7 +5,7 @@ import App from './App.tsx'
 import './index.css'
 import { ThemeProvider } from './components/ThemeProvider'
 
-const PUBLISHABLE_KEY = import.meta.env.pk_test_bW9kZXJuLW9yY2EtODQuY2xlcmsuYWNjb3VudHMuZGV2JA;
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 // Allow the app to run with or without Clerk
 const shouldUseClerk = !!PUBLISHABLE_KEY;
