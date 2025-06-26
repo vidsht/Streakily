@@ -140,7 +140,7 @@ export const StreakCalendar = ({ streak, onToggleCompletion, horizontal = false 
               
               return (
                 <div key={monthIndex} className="flex-1">
-                  <h4 className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 text-center">
+                  <h4 className="text-xl font-bold text-black dark:text-white mb-6 text-center drop-shadow-md">
                     {monthName} {year}
                   </h4>
                   <div className="grid grid-cols-7 gap-2 max-w-none">
@@ -177,7 +177,7 @@ export const StreakCalendar = ({ streak, onToggleCompletion, horizontal = false 
           </div>
           
           {/* Legend */}
-          <div className="flex items-center justify-center gap-8 text-sm text-gray-600 mt-8 pt-6 border-t border-purple-100">
+          <div className="flex items-center justify-center gap-8 text-sm text-black dark:text-gray-300 mt-8 pt-6 border-t border-purple-100 dark:border-red-500/20">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full shadow-sm"></div>
               <span className="font-medium">Completed ({streak.completions.length})</span>

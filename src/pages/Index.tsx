@@ -1,10 +1,11 @@
+
 import { AuthGuard } from '@/components/AuthGuard';
 import { StreakForm } from '@/components/StreakForm';
 import { StreakCalendar } from '@/components/StreakCalendar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useStreaks } from '@/hooks/useStreaks';
-import { Plus, Target, TrendingUp, Calendar, Zap, CheckCircle, Trophy } from 'lucide-react';
+import { Plus, Target, Calendar, Zap, CheckCircle, Trophy } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useState } from 'react';
 
@@ -26,12 +27,26 @@ const Index = () => {
 
   // Calculate overall stats
   const totalStreaks = streaks.length;
-  const activeStreaks = streaks.filter(streak => {
-    const today = new Date().toISOString().split('T')[0];
-    return streak.completions.includes(today);
-  }).length;
-  
   const totalCompletions = streaks.reduce((sum, streak) => sum + streak.completions.length, 0);
+  const longestStreak = streaks.reduce((max, streak) => {
+    // Calculate current streak length
+    const today = new Date();
+    let currentStreak = 0;
+    
+    for (let i = 0; i >= 0; i--) {
+      const checkDate = new Date(today);
+      checkDate.setDate(today.getDate() - i);
+      const dateStr = checkDate.toISOString().split('T')[0];
+      
+      if (streak.completions.includes(dateStr)) {
+        currentStreak++;
+      } else {
+        break;
+      }
+    }
+    
+    return Math.max(max, currentStreak);
+  }, 0);
 
   const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
   const shouldUseAuth = !!PUBLISHABLE_KEY;
@@ -84,12 +99,12 @@ const Index = () => {
         <section className="text-center py-12 px-4">
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="space-y-4">
-              <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 dark:from-red-400 dark:via-red-500 dark:to-red-600 bg-clip-text text-transparent leading-tight">
+              <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 dark:from-red-400 dark:via-red-500 dark:to-red-600 bg-clip-text text-transparent leading-tight drop-shadow-lg">
                 Build Amazing Habits,
                 <br />
                 One Day at a Time! 🚀
               </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-lg md:text-xl text-black dark:text-gray-300 max-w-2xl mx-auto leading-relaxed font-medium drop-shadow-md">
                 Transform your life with Streakily! Track your daily habits, celebrate your wins, and watch your consistency grow into unstoppable momentum.
               </p>
             </div>
@@ -99,67 +114,28 @@ const Index = () => {
                 <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 dark:from-red-500 dark:to-red-700 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Track Daily</h3>
-                <p className="text-gray-600 dark:text-gray-300">Mark your habits complete each day with our beautiful calendar view</p>
+                <h3 className="text-xl font-semibold text-black dark:text-white mb-2 drop-shadow-sm">Track Daily</h3>
+                <p className="text-black dark:text-gray-300 drop-shadow-sm">Mark your habits complete each day with our beautiful calendar view</p>
               </div>
               
               <div className="bg-white/70 dark:bg-black/40 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-pink-100 dark:border-red-500/20">
                 <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 dark:from-red-600 dark:to-red-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="h-6 w-6 text-white" />
+                  <Target className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Build Momentum</h3>
-                <p className="text-gray-600 dark:text-gray-300">Watch your streaks grow longer and your habits become second nature</p>
+                <h3 className="text-xl font-semibold text-black dark:text-white mb-2 drop-shadow-sm">Build Momentum</h3>
+                <p className="text-black dark:text-gray-300 drop-shadow-sm">Watch your streaks grow longer and your habits become second nature</p>
               </div>
               
               <div className="bg-white/70 dark:bg-black/40 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-100 dark:border-red-500/20">
                 <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-red-500 dark:from-red-700 dark:to-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trophy className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Celebrate Wins</h3>
-                <p className="text-gray-600 dark:text-gray-300">Every completed day is a victory worth celebrating!</p>
+                <h3 className="text-xl font-semibold text-black dark:text-white mb-2 drop-shadow-sm">Celebrate Wins</h3>
+                <p className="text-black dark:text-gray-300 drop-shadow-sm">Every completed day is a victory worth celebrating!</p>
               </div>
             </div>
           </div>
         </section>
-
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-white/70 dark:bg-black/40 backdrop-blur-sm border-purple-100 dark:border-red-500/20 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Streaks</CardTitle>
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 dark:from-red-500 dark:to-red-700 rounded-full flex items-center justify-center">
-                <Target className="h-4 w-4 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent">{totalStreaks}</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white/70 dark:bg-black/40 backdrop-blur-sm border-green-100 dark:border-red-500/20 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Active Today</CardTitle>
-              <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 dark:from-red-600 dark:to-red-800 rounded-full flex items-center justify-center">
-                <TrendingUp className="h-4 w-4 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 dark:from-red-500 dark:to-red-700 bg-clip-text text-transparent">{activeStreaks}</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white/70 dark:bg-black/40 backdrop-blur-sm border-orange-100 dark:border-red-500/20 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Completions</CardTitle>
-              <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-red-500 dark:from-red-700 dark:to-red-900 rounded-full flex items-center justify-center">
-                <Calendar className="h-4 w-4 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 dark:from-red-400 dark:to-red-500 bg-clip-text text-transparent">{totalCompletions}</div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Streaks with Inline Calendars */}
         <div className="space-y-8">
@@ -168,10 +144,10 @@ const Index = () => {
               <div className="w-24 h-24 bg-gradient-to-r from-purple-400 to-pink-400 dark:from-red-600 dark:to-red-800 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Target className="h-12 w-12 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+              <h3 className="text-2xl font-bold text-black dark:text-white mb-4 drop-shadow-sm">
                 Ready to Start Your Journey? 🌟
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg max-w-md mx-auto">
+              <p className="text-black dark:text-gray-300 mb-8 text-lg max-w-md mx-auto drop-shadow-sm">
                 Create your first streak and begin building the habits that will transform your life!
               </p>
               <Button 
@@ -187,13 +163,13 @@ const Index = () => {
               <Card key={streak.id} className="w-full bg-white/70 dark:bg-black/40 backdrop-blur-sm border-purple-100 dark:border-red-500/20 shadow-lg hover:shadow-xl transition-all duration-300">
                 <CardHeader className="pb-4">
                   <div className="space-y-3">
-                    <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent">{streak.name}</CardTitle>
-                    <p className="text-gray-600 dark:text-gray-300 text-lg">{streak.description}</p>
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-red-900/40 dark:to-red-800/40 text-purple-700 dark:text-red-300 rounded-full font-medium">
+                    <CardTitle className="text-3xl text-center bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent drop-shadow-sm">{streak.name}</CardTitle>
+                    <p className="text-black dark:text-gray-300 text-lg text-center drop-shadow-sm">{streak.description}</p>
+                    <div className="flex flex-wrap justify-center gap-4 text-sm">
+                      <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-red-900/40 dark:to-red-800/40 text-black dark:text-red-300 rounded-full font-medium">
                         <strong>Category:</strong> {streak.category}
                       </span>
-                      <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-red-800/40 dark:to-red-700/40 text-blue-700 dark:text-red-300 rounded-full font-medium">
+                      <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-red-800/40 dark:to-red-700/40 text-black dark:text-red-300 rounded-full font-medium">
                         <strong>Frequency:</strong> {streak.frequency}
                       </span>
                     </div>
@@ -232,13 +208,52 @@ const Index = () => {
             />
           </div>
         )}
+
+        {/* Stats Section - Moved to bottom */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+          <Card className="bg-white/70 dark:bg-black/40 backdrop-blur-sm border-purple-100 dark:border-red-500/20 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-black dark:text-gray-300 drop-shadow-sm">Total Streaks</CardTitle>
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 dark:from-red-500 dark:to-red-700 rounded-full flex items-center justify-center">
+                <Target className="h-4 w-4 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent">{totalStreaks}</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white/70 dark:bg-black/40 backdrop-blur-sm border-green-100 dark:border-red-500/20 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-black dark:text-gray-300 drop-shadow-sm">Longest Streak</CardTitle>
+              <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 dark:from-red-600 dark:to-red-800 rounded-full flex items-center justify-center">
+                <Trophy className="h-4 w-4 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 dark:from-red-500 dark:to-red-700 bg-clip-text text-transparent">{longestStreak} days</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white/70 dark:bg-black/40 backdrop-blur-sm border-orange-100 dark:border-red-500/20 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-black dark:text-gray-300 drop-shadow-sm">Total Completions</CardTitle>
+              <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-red-500 dark:from-red-700 dark:to-red-900 rounded-full flex items-center justify-center">
+                <Calendar className="h-4 w-4 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 dark:from-red-400 dark:to-red-500 bg-clip-text text-transparent">{totalCompletions}</div>
+            </CardContent>
+          </Card>
+        </div>
       </main>
 
       {/* Footer */}
       <footer className="bg-white/80 dark:bg-black/80 backdrop-blur-md border-t border-purple-100 dark:border-red-500/20 mt-16 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <p className="text-gray-600 dark:text-gray-300 text-lg">
+            <p className="text-black dark:text-gray-300 text-lg drop-shadow-sm">
               Made with <span className="text-red-500 text-xl">❤️</span> by <span className="font-semibold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent">Vidushi Tiwari</span>
             </p>
           </div>
