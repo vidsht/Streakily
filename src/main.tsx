@@ -4,7 +4,7 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import App from './App.tsx'
 import './index.css'
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const PUBLISHABLE_KEY = import.meta.env.pk_test_cmVuZXdpbmctZ2liYm9uLTg1LmNsZXJrLmFjY291bnRzLmRldiQ
 
 // Allow the app to run with or without Clerk
 const shouldUseClerk = !!PUBLISHABLE_KEY;
