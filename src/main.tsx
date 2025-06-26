@@ -6,7 +6,7 @@ import './index.css'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
-// Temporarily allow the app to run without Clerk for development
+// Allow the app to run with or without Clerk
 const shouldUseClerk = !!PUBLISHABLE_KEY;
 
 if (shouldUseClerk) {

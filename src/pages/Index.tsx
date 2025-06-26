@@ -1,4 +1,3 @@
-
 import { AuthGuard } from '@/components/AuthGuard';
 import { StreakForm } from '@/components/StreakForm';
 import { StreakCalendar } from '@/components/StreakCalendar';
@@ -37,9 +36,19 @@ const Index = () => {
   const shouldUseAuth = !!PUBLISHABLE_KEY;
 
   const content = (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 relative">
+      {/* Subtle background pattern */}
+      <div className="fixed inset-0 opacity-5 pointer-events-none">
+        <div className="absolute top-20 left-20 w-32 h-32 bg-purple-400 rounded-full"></div>
+        <div className="absolute top-40 right-32 w-24 h-24 bg-pink-400 rounded-full"></div>
+        <div className="absolute bottom-32 left-40 w-20 h-20 bg-orange-400 rounded-full"></div>
+        <div className="absolute bottom-20 right-20 w-28 h-28 bg-purple-400 rounded-full"></div>
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-pink-400 rounded-full"></div>
+        <div className="absolute top-1/3 right-1/4 w-36 h-36 bg-orange-400 rounded-full"></div>
+      </div>
+
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-purple-100 sticky top-0 z-40">
+      <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-purple-100 sticky top-0 z-40 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -63,7 +72,7 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 relative z-10">
         {/* Introduction Section */}
         <section className="text-center py-12 px-4">
           <div className="max-w-4xl mx-auto space-y-8">
@@ -219,7 +228,7 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white/80 backdrop-blur-md border-t border-purple-100 mt-16">
+      <footer className="bg-white/80 backdrop-blur-md border-t border-purple-100 mt-16 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <p className="text-gray-600 text-lg">
