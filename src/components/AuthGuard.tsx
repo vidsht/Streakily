@@ -6,6 +6,14 @@ import { useEffect } from 'react';
 export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Only redirect to intro if we're not already there
+    const currentPath = window.location.pathname;
+    if (currentPath !== '/intro') {
+      navigate('/intro');
+    }
+  }, [navigate]);
+
   return (
     <>
       <SignedOut>
@@ -15,7 +23,6 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
             <p className="text-gray-600">Redirecting to login...</p>
           </div>
         </div>
-        {/* This will trigger navigation but we need to do it in useEffect */}
       </SignedOut>
       <SignedIn>
         {children}

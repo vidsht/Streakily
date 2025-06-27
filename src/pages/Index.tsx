@@ -15,14 +15,12 @@ const Index = () => {
   const [selectedStreak, setSelectedStreak] = useState(null);
   const navigate = useNavigate();
 
-  const PUBLISHABLE_KEY = "pk_test_bW9kZXJuLW9yY2EtODQuY2xlcmsuYWNjb3VudHMuZGV2JA";
+  const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "pk_test_bW9kZXJuLW9yY2EtODQuY2xlcmsuYWNjb3VudHMuZGV2JA";
   const shouldUseAuth = !!PUBLISHABLE_KEY;
 
   // Redirect to introduction page if not authenticated and auth is enabled
   useEffect(() => {
-    if (shouldUseAuth) {
-      // This will be handled by AuthGuard component
-    } else {
+    if (!shouldUseAuth) {
       // If no auth configured, redirect to intro page
       navigate('/intro');
     }
