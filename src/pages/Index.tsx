@@ -15,7 +15,7 @@ const Index = () => {
   const [selectedStreak, setSelectedStreak] = useState(null);
   const navigate = useNavigate();
 
-  const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+  const PUBLISHABLE_KEY = pk_test_bW9kZXJuLW9yY2EtODQuY2xlcmsuYWNjb3VudHMuZGV2JA;
   const shouldUseAuth = !!PUBLISHABLE_KEY;
 
   // Redirect to introduction page if not authenticated and auth is enabled
