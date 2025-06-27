@@ -1,18 +1,32 @@
-
 import { AuthGuard } from '@/components/AuthGuard';
 import { StreakForm } from '@/components/StreakForm';
 import { StreakCalendar } from '@/components/StreakCalendar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useStreaks } from '@/hooks/useStreaks';
-import { Plus, Target, Calendar, Zap, CheckCircle, Trophy } from 'lucide-react';
+import { Plus, Target, Calendar, Zap, Trophy } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const { streaks, loading, addStreak, toggleCompletion, deleteStreak, updateStreak } = useStreaks();
   const [showForm, setShowForm] = useState(false);
   const [selectedStreak, setSelectedStreak] = useState(null);
+  const navigate = useNavigate();
+
+  const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+  const shouldUseAuth = !!PUBLISHABLE_KEY;
+
+  // Redirect to introduction page if not authenticated and auth is enabled
+  useEffect(() => {
+    if (shouldUseAuth) {
+      // This will be handled by AuthGuard component
+    } else {
+      // If no auth configured, redirect to intro page
+      navigate('/intro');
+    }
+  }, [shouldUseAuth, navigate]);
 
   if (loading) {
     return (
@@ -47,9 +61,6 @@ const Index = () => {
     
     return Math.max(max, currentStreak);
   }, 0);
-
-  const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-  const shouldUseAuth = !!PUBLISHABLE_KEY;
 
   const content = (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-900 dark:via-red-900 dark:to-black relative">
@@ -95,48 +106,6 @@ const Index = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 relative z-10">
-        {/* Introduction Section */}
-        <section className="text-center py-12 px-4">
-          <div className="max-w-4xl mx-auto space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 dark:from-red-400 dark:via-red-500 dark:to-red-600 bg-clip-text text-transparent leading-tight drop-shadow-lg">
-                Build Amazing Habits,
-                <br />
-                One Day at a Time! 🚀
-              </h2>
-              <p className="text-lg md:text-xl text-black dark:text-gray-300 max-w-2xl mx-auto leading-relaxed font-medium drop-shadow-md">
-                Transform your life with Streakily! Track your daily habits, celebrate your wins, and watch your consistency grow into unstoppable momentum.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-              <div className="bg-white/70 dark:bg-black/40 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-100 dark:border-red-500/20">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 dark:from-red-500 dark:to-red-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-black dark:text-white mb-2 drop-shadow-sm">Track Daily</h3>
-                <p className="text-black dark:text-gray-300 drop-shadow-sm">Mark your habits complete each day with our beautiful calendar view</p>
-              </div>
-              
-              <div className="bg-white/70 dark:bg-black/40 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-pink-100 dark:border-red-500/20">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 dark:from-red-600 dark:to-red-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Target className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-black dark:text-white mb-2 drop-shadow-sm">Build Momentum</h3>
-                <p className="text-black dark:text-gray-300 drop-shadow-sm">Watch your streaks grow longer and your habits become second nature</p>
-              </div>
-              
-              <div className="bg-white/70 dark:bg-black/40 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-100 dark:border-red-500/20">
-                <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-red-500 dark:from-red-700 dark:to-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Trophy className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-black dark:text-white mb-2 drop-shadow-sm">Celebrate Wins</h3>
-                <p className="text-black dark:text-gray-300 drop-shadow-sm">Every completed day is a victory worth celebrating!</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Streaks with Inline Calendars */}
         <div className="space-y-8">
           {streaks.length === 0 ? (
@@ -267,8 +236,8 @@ const Index = () => {
     return <AuthGuard>{content}</AuthGuard>;
   }
 
-  // Otherwise, show content directly
-  return content;
+  // Otherwise, redirect to introduction page
+  return null;
 };
 
 export default Index;
