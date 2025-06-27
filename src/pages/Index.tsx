@@ -1,6 +1,9 @@
+
 import { AuthGuard } from '@/components/AuthGuard';
 import { StreakForm } from '@/components/StreakForm';
 import { StreakCalendar } from '@/components/StreakCalendar';
+import { DailyGoals } from '@/components/DailyGoals';
+import { UserMenu } from '@/components/UserMenu';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useStreaks } from '@/hooks/useStreaks';
@@ -18,13 +21,19 @@ const Index = () => {
   const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "pk_test_bW9kZXJuLW9yY2EtODQuY2xlcmsuYWNjb3VudHMuZGV2JA";
   const shouldUseAuth = !!PUBLISHABLE_KEY;
 
-  // Redirect to introduction page if not authenticated and auth is enabled
+  // Only redirect to intro if no auth is configured
   useEffect(() => {
     if (!shouldUseAuth) {
-      // If no auth configured, redirect to intro page
       navigate('/intro');
     }
   }, [shouldUseAuth, navigate]);
+
+  const scrollToGoals = () => {
+    document.getElementById('daily-goals')?.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+  };
 
   if (loading) {
     return (
@@ -88,6 +97,14 @@ const Index = () => {
                   Streakily
                 </h1>
               </div>
+              <Button 
+                variant="ghost" 
+                onClick={scrollToGoals}
+                className="hidden sm:flex items-center gap-2 text-purple-600 dark:text-red-400 hover:text-purple-800 dark:hover:text-red-300"
+              >
+                <Target className="h-4 w-4" />
+                Manage Daily Goals
+              </Button>
             </div>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
@@ -98,24 +115,47 @@ const Index = () => {
                 <Plus className="h-4 w-4" />
                 New Streak
               </Button>
+              {shouldUseAuth && <UserMenu />}
             </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 relative z-10">
+        {/* Welcome Section */}
+        <div className="text-center py-8">
+          <h2 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent mb-4">
+            Welcome to Your Success Journey! 🚀
+          </h2>
+          <p className="text-xl text-black dark:text-gray-300 max-w-3xl mx-auto">
+            Build lasting habits with streaks and achieve your daily goals. Track your progress, stay motivated, and transform your life one day at a time!
+          </p>
+        </div>
+
+        {/* Daily Goals Section */}
+        <DailyGoals />
+
         {/* Streaks with Inline Calendars */}
         <div className="space-y-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent mb-4">
+              Your Habit Streaks 🔥
+            </h2>
+            <p className="text-lg text-black dark:text-gray-300 max-w-2xl mx-auto">
+              Long-term habits that compound over time. Build consistency and watch your streaks grow!
+            </p>
+          </div>
+
           {streaks.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-24 h-24 bg-gradient-to-r from-purple-400 to-pink-400 dark:from-red-600 dark:to-red-800 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Target className="h-12 w-12 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-black dark:text-white mb-4 drop-shadow-sm">
-                Ready to Start Your Journey? 🌟
+                Ready to Start Your First Streak? 🌟
               </h3>
               <p className="text-black dark:text-gray-300 mb-8 text-lg max-w-md mx-auto drop-shadow-sm">
-                Create your first streak and begin building the habits that will transform your life!
+                Create your first habit streak and begin building the consistency that will transform your life!
               </p>
               <Button 
                 onClick={() => setShowForm(true)}
@@ -234,8 +274,8 @@ const Index = () => {
     return <AuthGuard>{content}</AuthGuard>;
   }
 
-  // Otherwise, redirect to introduction page
-  return null;
+  // If no auth, show content directly (but will redirect to intro)
+  return content;
 };
 
 export default Index;
