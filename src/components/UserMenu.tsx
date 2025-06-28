@@ -1,5 +1,5 @@
 
-import { UserButton, useUser } from '@clerk/clerk-react';
+import { UserButton, useUser, useClerk } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const UserMenu = () => {
   const { user } = useUser();
+  const { signOut } = useClerk();
   const navigate = useNavigate();
 
   if (!user) return null;
@@ -42,7 +43,7 @@ export const UserMenu = () => {
           <Settings className="mr-2 h-4 w-4" />
           Edit Details
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => user.signOut()}>
+        <DropdownMenuItem onClick={() => signOut()}>
           <LogOut className="mr-2 h-4 w-4" />
           Logout
         </DropdownMenuItem>
