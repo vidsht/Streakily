@@ -1,8 +1,7 @@
-
 import { SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react';
 import { StreakForm } from '@/components/StreakForm';
-import { StreakCalendar } from '@/components/StreakCalendar';
-import { DailyGoals } from '@/components/DailyGoals';
+import { StreakCalendarWithConfetti } from '@/components/StreakCalendarWithConfetti';
+import { DailyGoalsSidebar } from '@/components/DailyGoalsSidebar';
 import { UserMenu } from '@/components/UserMenu';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -116,13 +115,7 @@ const StreakDashboard = () => {
   const { streaks, loading, addStreak, toggleCompletion, deleteStreak, updateStreak } = useStreaks();
   const [showForm, setShowForm] = useState(false);
   const [selectedStreak, setSelectedStreak] = useState(null);
-
-  const scrollToGoals = () => {
-    document.getElementById('daily-goals')?.scrollIntoView({ 
-      behavior: 'smooth',
-      block: 'start'
-    });
-  };
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
     return (
@@ -173,6 +166,9 @@ const StreakDashboard = () => {
         <div className="absolute top-1/3 right-1/4 w-36 h-36 bg-orange-400 dark:bg-red-600 rounded-full"></div>
       </div>
 
+      {/* Daily Goals Sidebar */}
+      <DailyGoalsSidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+
       {/* Header */}
       <header className="bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-lg border-b border-purple-100 dark:border-red-500/20 sticky top-0 z-40 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -186,16 +182,16 @@ const StreakDashboard = () => {
                   Streakily
                 </h1>
               </div>
+            </div>
+            <div className="flex items-center space-x-4">
               <Button 
                 variant="ghost" 
-                onClick={scrollToGoals}
-                className="hidden sm:flex items-center gap-2 text-purple-600 dark:text-red-400 hover:text-purple-800 dark:hover:text-red-300"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="flex items-center gap-2 text-purple-600 dark:text-red-400 hover:text-purple-800 dark:hover:text-red-300"
               >
                 <Target className="h-4 w-4" />
                 Manage Daily Goals
               </Button>
-            </div>
-            <div className="flex items-center space-x-4">
               <ThemeToggle />
               <Button 
                 onClick={() => setShowForm(true)} 
@@ -220,9 +216,6 @@ const StreakDashboard = () => {
             Build lasting habits with streaks and achieve your daily goals. Track your progress, stay motivated, and transform your life one day at a time!
           </p>
         </div>
-
-        {/* Daily Goals Section */}
-        <DailyGoals />
 
         {/* Streaks with Inline Calendars */}
         <div className="space-y-8">
@@ -272,7 +265,7 @@ const StreakDashboard = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <StreakCalendar
+                  <StreakCalendarWithConfetti
                     streak={streak}
                     onToggleCompletion={toggleCompletion}
                     horizontal={true}
