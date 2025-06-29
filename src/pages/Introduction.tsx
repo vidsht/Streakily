@@ -49,13 +49,10 @@ const Introduction = () => {
               
               <div className="space-y-4">
                 <h2 className="text-3xl md:text-5xl font-bold text-black dark:text-white mb-4 drop-shadow-lg">
-                  Build Amazing Habits,
+                  Build Amazing Habits
                   <br />
                   One Day at a Time! 
                 </h2>
-                <p className="text-black dark:text-gray-300 text-lg md:text-xl leading-relaxed font-medium drop-shadow-md">
-                  Transform your life with Streakily! Track your daily habits, celebrate your wins, and watch your consistency grow into unstoppable momentum.
-                </p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-6">
