@@ -25,6 +25,7 @@ export const useDailyGoals = () => {
     if (!user) return;
 
     try {
+      console.log('Fetching goals for user:', user.id);
       const { data, error } = await supabase
         .from('daily_goals')
         .select('*')
@@ -41,6 +42,7 @@ export const useDailyGoals = () => {
         return;
       }
 
+      console.log('Goals fetched successfully:', data);
       setGoals(data || []);
     } catch (error) {
       console.error('Error fetching goals:', error);
@@ -53,6 +55,7 @@ export const useDailyGoals = () => {
     if (!user || !text.trim()) return;
 
     try {
+      console.log('Adding goal for user:', user.id);
       const { data, error } = await supabase
         .from('daily_goals')
         .insert([
@@ -75,6 +78,7 @@ export const useDailyGoals = () => {
         return;
       }
 
+      console.log('Goal added successfully:', data);
       setGoals([...goals, data]);
       toast({
         title: "Goal Added",
@@ -90,6 +94,7 @@ export const useDailyGoals = () => {
     if (!goal) return;
 
     try {
+      console.log('Toggling goal:', id);
       const { error } = await supabase
         .from('daily_goals')
         .update({ completed: !goal.completed, updated_at: new Date().toISOString() })
@@ -122,6 +127,7 @@ export const useDailyGoals = () => {
 
   const deleteGoal = async (id: string) => {
     try {
+      console.log('Deleting goal:', id);
       const { error } = await supabase
         .from('daily_goals')
         .delete()
