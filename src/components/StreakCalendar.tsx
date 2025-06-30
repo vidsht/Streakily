@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Streak } from '@/types/streak';
+import { AchievementBadge } from '@/components/AchievementBadge';
+import { useAchievements } from '@/hooks/useAchievements';
 import { useState, useEffect } from 'react';
 
 interface StreakCalendarProps {
@@ -23,9 +25,30 @@ interface StreakCalendarProps {
 export const StreakCalendar = ({ streak, onToggleCompletion, horizontal = false }: StreakCalendarProps) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { getLatestStreakAchievement, generateShareText } = useAchievements();
   
   // Force re-render when streak completions change
   const [, forceUpdate] = useState({});
+  
+  const latestAchievement = getLatestStreakAchievement(streak.id);
+
+  const handleShareAchievement = (achievement: any) => {
+    const shareText = generateShareText(achievement);
+    if (navigator.share) {
+      navigator.share({
+        title: achievement.title,
+        text: shareText,
+      }).catch(console.error);
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert('Achievement copied to clipboard!');
+      }).catch(() => {
+        // Final fallback: show text in alert
+        alert(shareText);
+      });
+    }
+  };
   
   useEffect(() => {
     forceUpdate({});
@@ -130,16 +153,28 @@ export const StreakCalendar = ({ streak, onToggleCompletion, horizontal = false 
 
   if (horizontal) {
     return (
-      <>
-        <div className="w-full">
+      <>        <div className="w-full">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
             {months.map((monthDate, monthIndex) => {
               const days = generateDaysForMonth(monthDate);
               const monthName = monthNames[monthDate.getMonth()];
               const year = monthDate.getFullYear();
+              const isCurrentMonth = monthIndex === months.length - 1; // Last month is current month
               
               return (
-                <div key={monthIndex} className="flex-1">
+                <div key={monthIndex} className="flex-1 relative">
+                  {/* Achievement Badge - show on current month */}
+                  {isCurrentMonth && latestAchievement && (
+                    <div className="absolute -top-2 -left-2 z-10">
+                      <AchievementBadge 
+                        achievement={latestAchievement}
+                        onShare={handleShareAchievement}
+                        showShareButton={true}
+                        size="md"
+                      />
+                    </div>
+                  )}
+                  
                   <h4 className="text-xl font-bold text-black dark:text-white mb-6 text-center drop-shadow-md">
                     {monthName} {year}
                   </h4>
@@ -149,20 +184,20 @@ export const StreakCalendar = ({ streak, onToggleCompletion, horizontal = false 
                       const todayDate = isToday(date);
                       const isClickable = todayDate;
                       
-                      return (
-                        <button
+                      return (                        <button
                           key={dayIndex}
                           onClick={() => handleDateClick(date)}
                           className={`
-                            w-10 h-10 rounded-full text-sm font-semibold transition-all duration-300 
-                            flex items-center justify-center border-2 transform hover:scale-110
+                            w-12 h-12 rounded-xl text-sm font-bold transition-all duration-300 
+                            flex items-center justify-center border-2 transform hover:scale-105 active:scale-95
+                            backdrop-blur-sm shadow-lg hover:shadow-xl
                             ${completed 
-                              ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white border-green-400 shadow-lg shadow-green-200' 
+                              ? 'bg-gradient-to-br from-green-400 to-emerald-600 dark:from-green-500 dark:to-emerald-700 text-white border-green-300 dark:border-green-500 shadow-green-200 dark:shadow-green-500/20' 
                               : todayDate
-                                ? 'border-purple-400 bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 hover:from-purple-100 hover:to-pink-100 shadow-md'
-                                : 'border-gray-200 text-gray-500 bg-white hover:bg-gray-50'
+                                ? 'border-purple-400 dark:border-purple-500 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-purple-900/50 dark:via-pink-900/50 dark:to-orange-900/50 text-purple-700 dark:text-purple-300 hover:from-purple-100 hover:via-pink-100 hover:to-orange-100 dark:hover:from-purple-800/60 dark:hover:via-pink-800/60 dark:hover:to-orange-800/60 shadow-purple-200 dark:shadow-purple-500/20'
+                                : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 hover:bg-gray-50 dark:hover:bg-gray-700/80 shadow-gray-100 dark:shadow-gray-700/20'
                             }
-                            ${isClickable ? 'cursor-pointer' : 'cursor-default'}
+                            ${isClickable ? 'cursor-pointer hover:border-purple-500 dark:hover:border-purple-400' : 'cursor-default opacity-60'}
                           `}
                           disabled={!isClickable}
                         >
@@ -171,25 +206,8 @@ export const StreakCalendar = ({ streak, onToggleCompletion, horizontal = false 
                       );
                     })}
                   </div>
-                </div>
-              );
+                </div>              );
             })}
-          </div>
-          
-          {/* Legend */}
-          <div className="flex items-center justify-center gap-8 text-sm text-black dark:text-gray-300 mt-8 pt-6 border-t border-purple-100 dark:border-red-500/20">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full shadow-sm"></div>
-              <span className="font-medium">Completed ({streak.completions.length})</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 border-2 border-purple-400 rounded-full bg-gradient-to-r from-purple-50 to-pink-50"></div>
-              <span className="font-medium">Today (clickable)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 border-2 border-gray-200 rounded-full bg-white"></div>
-              <span className="font-medium">Past days</span>
-            </div>
           </div>
         </div>
 
@@ -281,43 +299,50 @@ export const StreakCalendar = ({ streak, onToggleCompletion, horizontal = false 
     const nextMonth = new Date(year, month + 1, 1);
     return nextMonth.getMonth() > todayDate.getMonth() || nextMonth.getFullYear() > todayDate.getFullYear();
   };
-
   return (
     <>
-      <Card className="max-w-md mx-auto">
-        <CardContent className="px-4 pb-4">
-          {/* Month Navigation */}
-          <div className="flex items-center justify-between mb-4">
+      <Card className="max-w-md mx-auto bg-white/80 dark:bg-black/60 backdrop-blur-sm border-purple-100 dark:border-red-500/20 shadow-xl relative">
+        {/* Achievement Badge */}
+        {latestAchievement && (
+          <div className="absolute -top-2 -left-2 z-10">
+            <AchievementBadge 
+              achievement={latestAchievement}
+              onShare={handleShareAchievement}
+              showShareButton={true}
+              size="md"
+            />
+          </div>
+        )}
+        
+        <CardContent className="px-6 pb-6">{/* Month Navigation */}
+          <div className="flex items-center justify-between mb-6 pt-4">
             <button
               onClick={goToPreviousMonth}
               disabled={month === new Date().getMonth() && year === new Date().getFullYear() - 1}
-              className="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50"
+              className="p-2 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/40 disabled:opacity-50 transition-all duration-200 border border-purple-200 dark:border-purple-700 shadow-sm"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             </button>
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent">
               {monthNames[month]} {year}
             </h2>
             <button
               onClick={goToNextMonth}
               disabled={isNextMonthDisabled()}
-              className="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50"
+              className="p-2 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/40 disabled:opacity-50 transition-all duration-200 border border-purple-200 dark:border-purple-700 shadow-sm"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             </button>
           </div>
-          
-          {/* Day Headers */}
-          <div className="grid grid-cols-7 gap-1 mb-2">
+            {/* Day Headers */}
+          <div className="grid grid-cols-7 gap-2 mb-4">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-              <div key={day} className="text-center text-gray-500 text-xs">
+              <div key={day} className="text-center text-gray-600 dark:text-gray-400 text-sm font-semibold">
                 {day}
               </div>
             ))}
-          </div>
-
-          {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-1">
+          </div>          {/* Calendar Grid */}
+          <div className="grid grid-cols-7 gap-2">
             {days.map((date, index) => {
               const completed = isCompleted(date);
               const isCurrent = isCurrentMonth(date);
@@ -328,11 +353,13 @@ export const StreakCalendar = ({ streak, onToggleCompletion, horizontal = false 
                 <div
                   key={index}
                   className={`
-                    flex items-center justify-center h-8 w-8 rounded-full
-                    ${isCurrent ? 'text-gray-800' : 'text-gray-400'}
-                    ${completed ? 'bg-green-200 text-green-800' : ''}
-                    ${todayDateCheck ? 'font-bold border-2 border-blue-500' : ''}
-                    ${isPast && !todayDateCheck ? 'opacity-50' : ''}
+                    flex items-center justify-center h-10 w-10 rounded-xl font-bold text-sm
+                    transition-all duration-300 transform hover:scale-105 shadow-sm
+                    ${isCurrent ? 'text-gray-800 dark:text-gray-200' : 'text-gray-400 dark:text-gray-600'}
+                    ${completed ? 'bg-gradient-to-br from-green-400 to-emerald-600 dark:from-green-500 dark:to-emerald-700 text-white shadow-green-200 dark:shadow-green-500/20' : ''}
+                    ${todayDateCheck ? 'font-bold border-2 border-purple-500 dark:border-purple-400 bg-purple-50 dark:bg-purple-900/30' : ''}
+                    ${!completed && !todayDateCheck ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700' : ''}
+                    ${isPast && !todayDateCheck && !completed ? 'opacity-50' : ''}
                   `}
                 >
                   {date.getDate()}
@@ -340,33 +367,31 @@ export const StreakCalendar = ({ streak, onToggleCompletion, horizontal = false 
               );
             })}
           </div>
-
-          {/* Compact Legend */}
-          <div className="flex items-center justify-around mt-4 text-gray-600 text-xs">
-            <div>
-              <span className="inline-block w-3 h-3 rounded-full bg-green-200 align-middle mr-1"></span>
-              Completed
-            </div>
-            <div>
-              <span className="inline-block w-3 h-3 rounded-full border-2 border-blue-500 align-middle mr-1"></span>
-              Today
-            </div>
-          </div>
         </CardContent>
-      </Card>
-
-      {/* Confirmation Dialog */}
+      </Card>      {/* Confirmation Dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white/95 dark:bg-black/95 backdrop-blur-sm border-purple-200 dark:border-red-500/20">
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Action</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent">
+              Confirm Action
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600 dark:text-gray-400 text-base">
               {getConfirmationMessage()}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancelToggle}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmToggle}>Confirm</AlertDialogAction>
+            <AlertDialogCancel 
+              onClick={handleCancelToggle}
+              className="border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleConfirmToggle}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 dark:from-red-600 dark:to-red-800 hover:from-purple-600 hover:to-pink-600 dark:hover:from-red-700 dark:hover:to-red-900 text-white"
+            >
+              Confirm
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

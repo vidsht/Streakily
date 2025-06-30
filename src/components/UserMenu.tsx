@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Settings, LogOut } from 'lucide-react';
+import { Settings, LogOut, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const UserMenu = () => {
@@ -38,10 +38,13 @@ export const UserMenu = () => {
               {user.emailAddresses[0]?.emailAddress}
             </p>
           </div>
-        </div>
-        <DropdownMenuItem onClick={() => navigate('/profile')}>
+        </div>        <DropdownMenuItem onClick={() => navigate('/profile')}>
           <Settings className="mr-2 h-4 w-4" />
           Edit Details
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/about')}>
+          <Info className="mr-2 h-4 w-4" />
+          About
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => signOut()}>
           <LogOut className="mr-2 h-4 w-4" />

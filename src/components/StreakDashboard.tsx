@@ -4,19 +4,88 @@ import { StreakCalendarWithConfetti } from '@/components/StreakCalendarWithConfe
 import { DailyGoalsSidebar } from '@/components/DailyGoalsSidebar';
 import { UserMenu } from '@/components/UserMenu';
 import { WelcomeSection } from '@/components/WelcomeSection';
-import { StatsSection } from '@/components/StatsSection';
+import { AchievementStats } from '@/components/AchievementStats';
+import { AchievementNotification } from '@/components/AchievementNotification';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle 
+} from '@/components/ui/alert-dialog';
 import { useStreaks } from '@/hooks/useStreaks';
-import { Plus, Target, Zap } from 'lucide-react';
+import { useAchievements } from '@/hooks/useAchievements';
+import { Plus, Target, Zap, Trash2, Edit } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const StreakDashboard = () => {
   const { streaks, loading, addStreak, toggleCompletion, deleteStreak, updateStreak } = useStreaks();
+  const { newAchievement, checkForNewAchievements, clearNewAchievement, generateShareText } = useAchievements();
   const [showForm, setShowForm] = useState(false);
   const [selectedStreak, setSelectedStreak] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [streakToDelete, setStreakToDelete] = useState(null);
+
+  // Check for achievements when streaks change
+  useEffect(() => {
+    streaks.forEach(streak => {
+      checkForNewAchievements(streak);
+    });
+  }, [streaks, checkForNewAchievements]);
+
+  const handleToggleCompletion = (id: string, date?: string) => {
+    toggleCompletion(id, date);
+    // Check for new achievements after a slight delay to ensure state is updated
+    setTimeout(() => {
+      const streak = streaks.find(s => s.id === id);
+      if (streak) {
+        checkForNewAchievements(streak);
+      }
+    }, 100);
+  };
+
+  const handleDeleteClick = (streak: any) => {
+    setStreakToDelete(streak);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (streakToDelete) {
+      deleteStreak(streakToDelete.id);
+      setStreakToDelete(null);
+      setShowDeleteDialog(false);
+    }
+  };
+
+  const handleEditClick = (streak: any) => {
+    setSelectedStreak(streak);
+    setShowForm(true);
+  };
+
+  const handleShareAchievement = (achievement: any) => {
+    const shareText = generateShareText(achievement);
+    if (navigator.share) {
+      navigator.share({
+        title: achievement.title,
+        text: shareText,
+      }).catch(console.error);
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert('Achievement copied to clipboard!');
+      }).catch(() => {
+        // Final fallback: show text in alert
+        alert(shareText);
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -26,45 +95,34 @@ export const StreakDashboard = () => {
           <p className="text-white text-lg font-medium">Loading your streaks...</p>
         </div>
       </div>
-    );
-  }
-
-  // Calculate overall stats
-  const totalStreaks = streaks.length;
-  const totalCompletions = streaks.reduce((sum, streak) => sum + streak.completions.length, 0);
-  const longestStreak = streaks.reduce((max, streak) => {
-    // Calculate current streak length
-    const today = new Date();
-    let currentStreak = 0;
-    
-    for (let i = 0; i >= 0; i--) {
-      const checkDate = new Date(today);
-      checkDate.setDate(today.getDate() - i);
-      const dateStr = checkDate.toISOString().split('T')[0];
-      
-      if (streak.completions.includes(dateStr)) {
-        currentStreak++;
-      } else {
-        break;
-      }
-    }
-    
-    return Math.max(max, currentStreak);
-  }, 0);
+    );  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-900 dark:via-red-900 dark:to-black relative">
-      {/* Background pattern for dark theme */}
-      <div className="fixed inset-0 dark:dark-pattern"></div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900 relative overflow-x-hidden crisscross-pattern">
+      {/* Modern layered background */}
+      <div className="fixed inset-0 opacity-40 dark:opacity-30">
+        <div className="absolute inset-0" 
+             style={{
+               backgroundImage: `
+                 radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                 radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                 radial-gradient(circle at 40% 60%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                 linear-gradient(45deg, rgba(147, 51, 234, 0.05) 25%, transparent 25%),
+                 linear-gradient(-45deg, rgba(59, 130, 246, 0.05) 25%, transparent 25%)
+               `,
+               backgroundSize: '500px 500px, 400px 400px, 300px 300px, 60px 60px, 60px 60px'
+             }}>
+        </div>
+      </div>
       
-      {/* Subtle background pattern */}
-      <div className="fixed inset-0 opacity-5 dark:opacity-10 pointer-events-none">
-        <div className="absolute top-20 left-20 w-32 h-32 bg-purple-400 dark:bg-red-500 rounded-full"></div>
-        <div className="absolute top-40 right-32 w-24 h-24 bg-pink-400 dark:bg-red-600 rounded-full"></div>
-        <div className="absolute bottom-32 left-40 w-20 h-20 bg-orange-400 dark:bg-red-400 rounded-full"></div>
-        <div className="absolute bottom-20 right-20 w-28 h-28 bg-purple-400 dark:bg-red-700 rounded-full"></div>
-        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-pink-400 dark:bg-red-500 rounded-full"></div>
-        <div className="absolute top-1/3 right-1/4 w-36 h-36 bg-orange-400 dark:bg-red-600 rounded-full"></div>
+      {/* Additional texture layer */}
+      <div className="fixed inset-0 opacity-20 dark:opacity-10 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full" 
+             style={{
+               backgroundImage: `radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.08) 0%, transparent 50%), 
+                                radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.08) 0%, transparent 50%)`
+             }}>
+        </div>
       </div>
 
       {/* Daily Goals Sidebar */}
@@ -83,8 +141,7 @@ export const StreakDashboard = () => {
                   Streakily
                 </h1>
               </div>
-            </div>
-            <div className="flex items-center space-x-4">
+            </div>            <div className="flex items-center space-x-4">
               <Button 
                 variant="ghost" 
                 onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -92,6 +149,13 @@ export const StreakDashboard = () => {
               >
                 <Target className="h-4 w-4" />
                 Manage Daily Goals
+              </Button>
+              <Button 
+                variant="ghost" 
+                onClick={() => window.location.href = '/about'}
+                className="flex items-center gap-2 text-purple-600 dark:text-red-400 hover:text-purple-800 dark:hover:text-red-300"
+              >
+                About
               </Button>
               <ThemeToggle />
               <Button 
@@ -107,21 +171,17 @@ export const StreakDashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 relative z-10">
-        {/* Welcome Section */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 relative z-10">        {/* Welcome Section */}
         <WelcomeSection />
 
-        {/* Streaks with Inline Calendars */}
+        {/* Achievement Stats Section */}
+        <div className="space-y-4">
+          <h3 className="text-2xl font-bold text-[rgb(145,50,231)] dark:text-white font-mono tracking-wider text-center">
+            🏆 Achievement Unlocked
+          </h3>
+          <AchievementStats />
+        </div>        {/* Streaks with Inline Calendars */}
         <div className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent mb-4">
-              Your Habit Streaks 🔥
-            </h2>
-            <p className="text-lg text-black dark:text-gray-300 max-w-2xl mx-auto">
-              Long-term habits that compound over time. Build consistency and watch your streaks grow!
-            </p>
-          </div>
-
           {streaks.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-24 h-24 bg-gradient-to-r from-purple-400 to-pink-400 dark:from-red-600 dark:to-red-800 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -190,15 +250,43 @@ export const StreakDashboard = () => {
               }}
             />
           </div>
-        )}
+        )        }      </main>
 
-        {/* Stats Section */}
-        <StatsSection 
-          totalStreaks={totalStreaks}
-          longestStreak={longestStreak}
-          totalCompletions={totalCompletions}
+      {/* Achievement Notification */}
+      {newAchievement && (
+        <AchievementNotification
+          achievement={newAchievement}
+          onClose={clearNewAchievement}
+          onShare={() => handleShareAchievement(newAchievement)}
         />
-      </main>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <Trash2 className="h-5 w-5" />
+              Delete Streak
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>Are you sure you want to delete <strong>"{streakToDelete?.name}"</strong>?</p>
+              <p className="text-red-600 dark:text-red-400 font-medium">
+                This action cannot be undone. All your progress and achievements for this streak will be permanently lost.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+            >
+              Delete Streak
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Footer */}
       <footer className="bg-white/80 dark:bg-black/80 backdrop-blur-md border-t border-purple-100 dark:border-red-500/20 mt-16 relative z-10">

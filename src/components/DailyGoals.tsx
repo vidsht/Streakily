@@ -62,16 +62,11 @@ export const DailyGoals = () => {
           <Plus className="h-4 w-4 mr-2" />
           Add Goal
         </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+      </div>      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
         {goals.map((goal) => (
           <Card 
             key={goal.id} 
-            className="bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900/40 dark:to-yellow-800/40 border-yellow-300 dark:border-yellow-700 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-            style={{
-              transform: `rotate(${Math.random() * 4 - 2}deg)`,
-            }}
+            className="bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900/40 dark:to-yellow-800/40 border-yellow-300 dark:border-yellow-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
           >
             <CardContent className="p-4 relative">
               <Button
