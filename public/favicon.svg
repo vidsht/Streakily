@@ -1,0 +1,34 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f7931e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Flame/Streak Icon -->
+  <path d="M16 4C14 6 12 8 12 12C12 16 14.5 18.5 16 20C17.5 18.5 20 16 20 12C20 8 18 6 16 4Z" fill="url(#flameGradient)"/>
+  
+  <!-- Smaller flame details -->
+  <path d="M16 6C15 7.5 14 9 14 11.5C14 14 15.5 15.5 16 16.5C16.5 15.5 18 14 18 11.5C18 9 17 7.5 16 6Z" fill="#ffaa00"/>
+  
+  <!-- Core -->
+  <circle cx="16" cy="14" r="2" fill="#fff200"/>
+  
+  <!-- Calendar grid representing habit tracking -->
+  <rect x="6" y="22" width="20" height="8" rx="2" fill="#4f46e5" opacity="0.8"/>
+  <rect x="8" y="24" width="2" height="2" rx="0.5" fill="#10b981"/>
+  <rect x="11" y="24" width="2" height="2" rx="0.5" fill="#10b981"/>
+  <rect x="14" y="24" width="2" height="2" rx="0.5" fill="#10b981"/>
+  <rect x="17" y="24" width="2" height="2" rx="0.5" fill="#6b7280"/>
+  <rect x="20" y="24" width="2" height="2" rx="0.5" fill="#6b7280"/>
+  <rect x="23" y="24" width="2" height="2" rx="0.5" fill="#6b7280"/>
+  
+  <rect x="8" y="27" width="2" height="2" rx="0.5" fill="#10b981"/>
+  <rect x="11" y="27" width="2" height="2" rx="0.5" fill="#10b981"/>
+  <rect x="14" y="27" width="2" height="2" rx="0.5" fill="#6b7280"/>
+  <rect x="17" y="27" width="2" height="2" rx="0.5" fill="#6b7280"/>
+  <rect x="20" y="27" width="2" height="2" rx="0.5" fill="#6b7280"/>
+  <rect x="23" y="27" width="2" height="2" rx="0.5" fill="#6b7280"/>
+</svg>

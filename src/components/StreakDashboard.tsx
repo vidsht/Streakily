@@ -22,6 +22,7 @@ import { useStreaks } from '@/hooks/useStreaks';
 import { useAchievements } from '@/hooks/useAchievements';
 import { Plus, Target, Zap, Trash2, Edit } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { StreaklyLogo } from '@/components/StreaklyLogo';
 import { useState, useEffect } from 'react';
 
 export const StreakDashboard = () => {
@@ -132,10 +133,9 @@ export const StreakDashboard = () => {
       <header className="bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-lg border-b border-purple-100 dark:border-red-500/20 sticky top-0 z-40 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 dark:from-red-600 dark:to-red-800 rounded-full flex items-center justify-center">
-                  <Zap className="h-5 w-5 text-white" />
+            <div className="flex items-center space-x-4">              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                  <StreaklyLogo size="sm" className="w-8 h-8" />
                 </div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent">
                   Streakily

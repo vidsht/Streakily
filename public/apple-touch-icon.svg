@@ -1,0 +1,46 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient180" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="flameGradient180" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f7931e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background with rounded corners for iOS -->
+  <rect width="180" height="180" rx="30" fill="url(#bgGradient180)"/>
+  
+  <!-- Main flame -->
+  <path d="M90 30C84 36 78 42 78 60C78 84 87 96 90 108C93 96 102 84 102 60C102 42 96 36 90 30Z" fill="url(#flameGradient180)"/>
+  
+  <!-- Inner flame -->
+  <path d="M90 36C87 42 84 48 84 57C84 72 87 78 90 87C93 78 96 72 96 57C96 48 93 42 90 36Z" fill="#ffaa00"/>
+  
+  <!-- Core flame -->
+  <ellipse cx="90" cy="63" rx="6" ry="12" fill="#fff200"/>
+  
+  <!-- Streak calendar representation -->
+  <rect x="30" y="120" width="120" height="36" rx="8" fill="#ffffff" opacity="0.2"/>
+  
+  <!-- Week 1 -->
+  <circle cx="45" cy="135" r="6" fill="#10b981"/>
+  <circle cx="60" cy="135" r="6" fill="#10b981"/>
+  <circle cx="75" cy="135" r="6" fill="#10b981"/>
+  <circle cx="90" cy="135" r="6" fill="#10b981"/>
+  <circle cx="105" cy="135" r="6" fill="#10b981"/>
+  <circle cx="120" cy="135" r="6" fill="#10b981"/>
+  <circle cx="135" cy="135" r="6" fill="#10b981"/>
+  
+  <!-- Week 2 -->
+  <circle cx="45" cy="150" r="6" fill="#10b981"/>
+  <circle cx="60" cy="150" r="6" fill="#10b981"/>
+  <circle cx="75" cy="150" r="6" fill="#10b981"/>
+  <circle cx="90" cy="150" r="6" fill="#6b7280" opacity="0.5"/>
+  <circle cx="105" cy="150" r="6" fill="#6b7280" opacity="0.3"/>
+  <circle cx="120" cy="150" r="6" fill="#6b7280" opacity="0.3"/>
+  <circle cx="135" cy="150" r="6" fill="#6b7280" opacity="0.3"/>
+</svg>

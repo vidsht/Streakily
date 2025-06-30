@@ -1,73 +1,81 @@
-# Welcome to your Lovable project
+# Streakily - Transform Your Life, One Habit at a Time
 
-## Project info
+A modern, gamified habit tracking application built with React, TypeScript, and Supabase. Track your daily habits, build streaks, and unlock achievements as you build consistency in your life.
 
-**URL**: https://lovable.dev/projects/0fa1c8d9-1fae-4ad4-ba8d-2ee434b131d7
+## ✨ Features
 
-## How can I edit this code?
+- **Visual Habit Tracking**: Beautiful calendar-based progress visualization
+- **Achievement System**: Unlock badges and celebrate milestones (7, 14, 30, 50, 100+ day streaks)
+- **Multi-Habit Support**: Track multiple habits simultaneously
+- **Daily Goals**: Sticky note-style goals that adapt to your routine
+- **Modern UI**: Glassmorphism effects, gradient backgrounds, and responsive design
+- **Dark/Light Mode**: Built-in theme support for comfortable viewing
+- **Achievement Stats**: Dashboard showing total badges, milestones, and progress
+- **Streak Management**: Delete streaks with confirmation dialogs
 
-There are several ways of editing your application.
+## 🚀 Getting Started
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0fa1c8d9-1fae-4ad4-ba8d-2ee434b131d7) and start prompting.
+- Node.js (v18 or higher)
+- npm or yarn
 
-Changes made via Lovable will be committed automatically to this repo.
+### Installation
 
-**Use your preferred IDE**
+1. Clone the repository:
+```bash
+git clone https://github.com/vidsht/Streakily.git
+cd Streakily
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. Install dependencies:
+```bash
+npm install
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Open your browser and navigate to `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🛠️ Tech Stack
 
-**Use GitHub Codespaces**
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, shadcn/ui components
+- **Authentication**: Clerk
+- **Database**: Supabase
+- **State Management**: React hooks and context
+- **Build Tool**: Vite
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 📱 The Seinfeld Strategy
 
-## What technologies are used for this project?
+Streakily is inspired by Jerry Seinfeld's "Don't Break the Chain" method. The idea is simple: focus on consistency rather than perfection. Mark each day you complete your habit and watch your chain grow longer.
 
-This project is built with:
+## 🏆 Achievement System
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Unlock beautiful badges as you progress:
+- **Milestone Badges**: 7, 14, 30, 50, 100+ day achievements
+- **Goal Completion**: Complete your target duration
+- **Consistency Rewards**: Perfect weeks and dedication badges
 
-## How can I deploy this project?
+## 🎨 Design Philosophy
 
-Simply open [Lovable](https://lovable.dev/projects/0fa1c8d9-1fae-4ad4-ba8d-2ee434b131d7) and click on Share -> Publish.
+- Clean, modern interface with glassmorphism effects
+- Gamification to make habit building fun and rewarding
+- Mobile-first responsive design
+- Accessibility-focused implementation
 
-## Can I connect a custom domain to my Lovable project?
+## 📄 License
 
-Yes, you can!
+Open Source - Feel free to use, modify, and distribute.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 👩‍💻 Author
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Built with ❤️ by **Vidushi Tiwari**  
+4th year Computer Science student at Madhav Institute of Technology and Science
+
+---
+
+*Transform your life, one habit at a time.*
