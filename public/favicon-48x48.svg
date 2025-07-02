@@ -1,0 +1,32 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="flameGradient48" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f7931e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="24" cy="24" r="24" fill="url(#bgGradient)"/>
+  
+  <!-- Main flame -->
+  <path d="M24 8C22 10 20 12 20 18C20 24 22.5 27 24 30C25.5 27 28 24 28 18C28 12 26 10 24 8Z" fill="url(#flameGradient48)"/>
+  
+  <!-- Inner flame -->
+  <path d="M24 10C23 12 22 14 22 17C22 20 23.5 22 24 24C24.5 22 26 20 26 17C26 14 25 12 24 10Z" fill="#ffaa00"/>
+  
+  <!-- Core flame -->
+  <ellipse cx="24" cy="18" rx="2" ry="3" fill="#fff200"/>
+  
+  <!-- Streak indicator dots -->
+  <circle cx="16" cy="36" r="2" fill="#10b981"/>
+  <circle cx="21" cy="36" r="2" fill="#10b981"/>
+  <circle cx="26" cy="36" r="2" fill="#10b981"/>
+  <circle cx="31" cy="36" r="2" fill="#6b7280" opacity="0.5"/>
+  <circle cx="36" cy="36" r="2" fill="#6b7280" opacity="0.5"/>
+</svg>

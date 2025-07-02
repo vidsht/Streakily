@@ -8,6 +8,12 @@ import { AchievementStats } from '@/components/AchievementStats';
 import { AchievementNotification } from '@/components/AchievementNotification';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { 
   AlertDialog, 
   AlertDialogAction, 
@@ -20,7 +26,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useStreaks } from '@/hooks/useStreaks';
 import { useAchievements } from '@/hooks/useAchievements';
-import { Plus, Target, Zap, Trash2, Edit } from 'lucide-react';
+import { calculateStreakStats } from '@/lib/streakUtils';
+import { Plus, Target, Zap, Trash2, Edit, Calendar, Flame } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { StreaklyLogo } from '@/components/StreaklyLogo';
 import { useState, useEffect } from 'react';
@@ -202,18 +209,67 @@ export const StreakDashboard = () => {
               </Button>
             </div>
           ) : (
-            streaks.map((streak) => (
-              <Card key={streak.id} className="w-full bg-white/70 dark:bg-black/40 backdrop-blur-sm border-purple-100 dark:border-red-500/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                <CardHeader className="pb-4">
-                  <div className="space-y-3">
-                    <CardTitle className="text-3xl text-center bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent drop-shadow-sm">{streak.name}</CardTitle>
-                    <p className="text-black dark:text-gray-300 text-lg text-center drop-shadow-sm">{streak.description}</p>
+            streaks.map((streak) => (              <Card key={streak.id} className="w-full bg-white/70 dark:bg-black/40 backdrop-blur-sm border-purple-100 dark:border-red-500/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                <CardHeader className="pb-4">                  <div className="space-y-3">                    <div className="flex justify-center items-center relative">
+                      <CardTitle className="text-3xl bg-gradient-to-r from-purple-600 to-pink-600 dark:from-red-400 dark:to-red-600 bg-clip-text text-transparent drop-shadow-sm text-center">{streak.name}</CardTitle>
+                      <div className="absolute right-0 flex items-center gap-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleEditClick(streak)}
+                                className="h-8 w-8 p-0 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Edit streak</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDeleteClick(streak)}
+                                className="h-8 w-8 p-0 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Delete streak</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </div><p className="text-black dark:text-gray-300 text-lg text-center drop-shadow-sm">{streak.description}</p>
+                    
                     <div className="flex flex-wrap justify-center gap-4 text-sm">
                       <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-red-900/40 dark:to-red-800/40 text-black dark:text-red-300 rounded-full font-medium">
                         <strong>Category:</strong> {streak.category}
                       </span>
                       <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-red-800/40 dark:to-red-700/40 text-black dark:text-red-300 rounded-full font-medium">
                         <strong>Frequency:</strong> {streak.frequency}
+                      </span>
+                      <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-800/40 text-black dark:text-green-300 rounded-full font-medium flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        <strong>{(() => {
+                          const stats = calculateStreakStats(streak);
+                          return stats.totalCompletions;
+                        })()}</strong> Active Days
+                      </span>
+                      <span className="px-3 py-1 bg-gradient-to-r from-orange-100 to-yellow-100 dark:from-orange-900/40 dark:to-yellow-800/40 text-black dark:text-orange-300 rounded-full font-medium flex items-center gap-1">
+                        <Flame className="h-3 w-3" />
+                        <strong>{(() => {
+                          const stats = calculateStreakStats(streak);
+                          return stats.longestStreak;
+                        })()}</strong> Best Streak
                       </span>
                     </div>
                   </div>

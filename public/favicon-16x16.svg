@@ -1,0 +1,24 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flameGradient16" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f7931e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Simplified flame for small size -->
+  <path d="M8 2C7 3 6 4 6 6C6 8 7.5 9.5 8 10C8.5 9.5 10 8 10 6C10 4 9 3 8 2Z" fill="url(#flameGradient16)"/>
+  <path d="M8 3C7.5 3.5 7 4.5 7 5.5C7 6.5 7.5 7 8 7.5C8.5 7 9 6.5 9 5.5C9 4.5 8.5 3.5 8 3Z" fill="#ffaa00"/>
+  <circle cx="8" cy="6" r="1" fill="#fff200"/>
+  
+  <!-- Simplified calendar -->
+  <rect x="2" y="11" width="12" height="4" rx="1" fill="#4f46e5" opacity="0.8"/>
+  <rect x="3" y="12" width="1" height="1" fill="#10b981"/>
+  <rect x="5" y="12" width="1" height="1" fill="#10b981"/>
+  <rect x="7" y="12" width="1" height="1" fill="#10b981"/>
+  <rect x="9" y="12" width="1" height="1" fill="#6b7280"/>
+  <rect x="11" y="12" width="1" height="1" fill="#6b7280"/>
+  <rect x="3" y="14" width="1" height="1" fill="#10b981"/>
+  <rect x="5" y="14" width="1" height="1" fill="#6b7280"/>
+</svg>

@@ -247,7 +247,7 @@ export const About = () => {
                 </Badge>
                 <Badge variant="outline" className="text-center justify-center">
                   <BookOpen className="h-4 w-4 mr-1" />
-                  MITS 2025
+                  MITS 2026
                 </Badge>
                 <Badge variant="outline" className="text-center justify-center">
                   <Target className="h-4 w-4 mr-1" />

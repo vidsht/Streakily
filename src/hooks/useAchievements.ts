@@ -1,32 +1,107 @@
 import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/clerk-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
 import { Achievement, ACHIEVEMENT_TEMPLATES } from '@/types/achievement';
 import { Streak } from '@/types/streak';
 
-const ACHIEVEMENTS_STORAGE_KEY = 'streakily_achievements';
-
 export const useAchievements = () => {
+  const { user, isLoaded } = useUser();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [newAchievement, setNewAchievement] = useState<Achievement | null>(null);
+  const [useLocalStorage, setUseLocalStorage] = useState(false);
 
-  // Load achievements from localStorage
-  useEffect(() => {
+  // Local storage key based on user ID or fallback
+  const getStorageKey = () => `streakily_achievements_${user?.id || 'guest'}`;
+
+  // Load achievements from local storage
+  const loadFromLocalStorage = () => {
     try {
-      const stored = localStorage.getItem(ACHIEVEMENTS_STORAGE_KEY);
-      if (stored) {
-        setAchievements(JSON.parse(stored));
-      }
+      const stored = localStorage.getItem(getStorageKey());
+      return stored ? JSON.parse(stored) : [];
     } catch (error) {
-      console.error('Error loading achievements:', error);
+      console.error('Error loading achievements from localStorage:', error);
+      return [];
     }
-  }, []);
+  };
 
-  // Save achievements to localStorage
-  const saveAchievements = (newAchievements: Achievement[]) => {
+  // Save achievements to local storage
+  const saveToLocalStorage = (achievementsToSave: Achievement[]) => {
     try {
-      localStorage.setItem(ACHIEVEMENTS_STORAGE_KEY, JSON.stringify(newAchievements));
-      setAchievements(newAchievements);
+      localStorage.setItem(getStorageKey(), JSON.stringify(achievementsToSave));
     } catch (error) {
-      console.error('Error saving achievements:', error);
+      console.error('Error saving achievements to localStorage:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (user) {
+        fetchAchievements();
+      } else {
+        setAchievements([]);
+      }
+    }
+  }, [user, isLoaded]);
+
+  const fetchAchievements = async () => {
+    if (!user?.id) {
+      console.log('No user or user ID available');
+      return;
+    }
+
+    try {
+      console.log('Fetching achievements for user:', user.id);
+      const { data, error } = await supabase
+        .from('achievements')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('unlocked_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching achievements:', error);
+        
+        // Check if it's an RLS/permission error
+        if (error.message.includes('RLS') || error.message.includes('permission') || error.message.includes('policy')) {
+          console.log('RLS/Permission error detected, falling back to localStorage');
+          setUseLocalStorage(true);
+          const localAchievements = loadFromLocalStorage();
+          setAchievements(localAchievements);
+          return;
+        }
+        
+        // For other errors, fall back to localStorage
+        console.log('Database error, falling back to localStorage');
+        setUseLocalStorage(true);
+        const localAchievements = loadFromLocalStorage();
+        setAchievements(localAchievements);
+        return;
+      }
+
+      console.log('Achievements fetched successfully:', data);
+      
+      // Convert database format to app format
+      const formattedAchievements: Achievement[] = data.map(dbAchievement => ({
+        id: dbAchievement.id,
+        streakId: dbAchievement.streak_id || '',
+        type: dbAchievement.type as any,
+        title: dbAchievement.title,
+        description: dbAchievement.description,
+        badge: dbAchievement.badge,
+        unlockedAt: dbAchievement.unlocked_at,
+        goalDays: dbAchievement.goal_days,
+        category: dbAchievement.category,
+        shareable: dbAchievement.shareable,
+      }));
+
+      setAchievements(formattedAchievements);
+      setUseLocalStorage(false);
+    } catch (error) {
+      console.error('Unexpected error fetching achievements:', error);
+      console.log('Falling back to localStorage due to unexpected error');
+      setUseLocalStorage(true);
+      const localAchievements = loadFromLocalStorage();
+      setAchievements(localAchievements);
     }
   };
 
@@ -36,8 +111,7 @@ export const useAchievements = () => {
     const existingAchievements = achievements.filter(a => a.streakId === streak.id);
     
     // Check for goal completion achievement
-    if (currentStreak >= streak.goalDuration) {
-      const hasGoalAchievement = existingAchievements.some(a => a.type === 'goal_completion');
+    if (currentStreak >= streak.goalDuration) {      const hasGoalAchievement = existingAchievements.some(a => a.type === 'goal_completion');
       if (!hasGoalAchievement) {
         const template = ACHIEVEMENT_TEMPLATES.goal_completion;
         const newAch: Achievement = {
@@ -54,7 +128,8 @@ export const useAchievements = () => {
         };
         
         const updatedAchievements = [...achievements, newAch];
-        saveAchievements(updatedAchievements);
+        setAchievements(updatedAchievements);
+        saveToLocalStorage(updatedAchievements);
         setNewAchievement(newAch);
         return newAch;
       }
@@ -79,11 +154,11 @@ export const useAchievements = () => {
             unlockedAt: new Date().toISOString(),
             goalDays: milestone,
             category: streak.category,
-            shareable: true
-          };
+            shareable: true          };
           
           const updatedAchievements = [...achievements, newAch];
-          saveAchievements(updatedAchievements);
+          setAchievements(updatedAchievements);
+          saveToLocalStorage(updatedAchievements);
           setNewAchievement(newAch);
           return newAch;
         }

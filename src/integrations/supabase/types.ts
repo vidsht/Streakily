@@ -36,6 +36,107 @@ export type Database = {
         }
         Relationships: []
       }
+      streaks: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          description: string | null
+          category: string
+          frequency: string
+          goal_duration: number
+          color: string
+          created_at: string
+          updated_at: string
+          completions: Json
+          reminder_time: string | null
+          timer_duration: number | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          description?: string | null
+          category: string
+          frequency: string
+          goal_duration: number
+          color: string
+          created_at?: string
+          updated_at?: string
+          completions?: Json
+          reminder_time?: string | null
+          timer_duration?: number | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          description?: string | null
+          category?: string
+          frequency?: string
+          goal_duration?: number
+          color?: string
+          created_at?: string
+          updated_at?: string
+          completions?: Json
+          reminder_time?: string | null
+          timer_duration?: number | null
+        }
+        Relationships: []
+      }
+      achievements: {
+        Row: {
+          id: string
+          user_id: string
+          streak_id: string | null
+          type: string
+          title: string
+          description: string
+          badge: string
+          unlocked_at: string
+          goal_days: number
+          category: string
+          shareable: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          streak_id?: string | null
+          type: string
+          title: string
+          description: string
+          badge: string
+          unlocked_at?: string
+          goal_days: number
+          category: string
+          shareable?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          streak_id?: string | null
+          type?: string
+          title?: string
+          description?: string
+          badge?: string
+          unlocked_at?: string
+          goal_days?: number
+          category?: string
+          shareable?: boolean
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievements_streak_id_fkey"
+            columns: ["streak_id"]
+            isOneToOne: false
+            referencedRelation: "streaks"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

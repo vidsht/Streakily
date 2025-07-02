@@ -5,9 +5,13 @@ import { Plus, Target, Calendar, Zap, Trophy, CheckCircle, TrendingUp, Medal, Aw
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { TypingAnimation } from '@/components/TypingAnimation';
 import { StreaklyLogo } from '@/components/StreaklyLogo';
+import { SparklesCursor } from '@/components/SparklesCursor';
 
 export const LandingPage = () => {
   return (    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-orange-300 dark:from-gray-900 dark:via-red-900 dark:to-black relative overflow-hidden">
+      {/* Sparkles Cursor Effect */}
+      <SparklesCursor />
+      
       {/* Background pattern for dark theme */}
       <div className="fixed inset-0 dark:dark-pattern"></div>
       
