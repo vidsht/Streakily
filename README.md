@@ -71,11 +71,6 @@ Unlock beautiful badges as you progress:
 
 Open Source - Feel free to use, modify, and distribute.
 
-## 👩‍💻 Author
-
-Built with ❤️ by **Vidushi Tiwari**  
-4th year Computer Science student at Madhav Institute of Technology and Science
-
 ---
 
 *Transform your life, one habit at a time.*
